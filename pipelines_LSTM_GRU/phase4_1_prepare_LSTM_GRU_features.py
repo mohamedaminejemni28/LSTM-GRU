@@ -185,10 +185,19 @@ def main():
         config["split_datasets"]["output_train_file"],
     )
 
-    output_file = os.path.join(
-        PROJECT_ROOT,
-        config["data"]["sfs_results_excel_file_LSTM_GRU"],
+    output_relative_path = (
+        config.get("data", {}).get("sfs_results_excel_file_LSTM_GRU")
+        or config.get("SFS", {}).get("Phase4_1_SFS_scores_file_LSTM_GRU")
     )
+
+    if not output_relative_path:
+        raise KeyError(
+            "Missing LSTM_GRU Phase 4.1 output path. Add either "
+            "data.sfs_results_excel_file_LSTM_GRU or "
+            "SFS.Phase4_1_SFS_scores_file_LSTM_GRU to configs/config.yaml."
+        )
+
+    output_file = os.path.join(PROJECT_ROOT, output_relative_path)
 
     create_LSTM_GRU_feature_sets(
         train_file=train_file,
